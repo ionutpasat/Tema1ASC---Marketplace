@@ -138,3 +138,93 @@ class Marketplace:
         with self.carts_lock:
             self.placed_orders += 1
         return self.carts[cart_id]
+
+class TestMarketplace(unittest.TestCase):
+    """
+    Class that represents the Marketplace Testing Unit.
+    """
+
+    def setUp(self):
+        """
+        Setting up the marketplace instance.
+        """
+        self.marketplace = Marketplace(3)
+
+    def test_register_producer(self):
+        """
+        Producer registration test.
+        """
+        producer_id = self.marketplace.register_producer()
+        self.assertEqual(producer_id, 0)
+
+    def test_publish(self):
+        """
+        Producer product publishing test.
+        """
+        producer_id = self.marketplace.register_producer()
+        result = self.marketplace.publish(producer_id, "product1")
+        self.assertEqual(result, True)
+        result = self.marketplace.publish(producer_id, "product2")
+        self.assertEqual(result, True)
+        result = self.marketplace.publish(producer_id, "product3")
+        self.assertEqual(result, True)
+        result = self.marketplace.publish(producer_id, "product4")
+        self.assertEqual(result, False)
+
+    def test_new_cart(self):
+        """
+        New cart registration test.
+        """
+        cart_id1 = self.marketplace.new_cart()
+        self.assertEqual(cart_id1, 0)
+        cart_id2 = self.marketplace.new_cart()
+        self.assertEqual(cart_id2, 1)
+        cart_id3 = self.marketplace.new_cart()
+        self.assertEqual(cart_id3, 2)
+
+    def test_add_to_cart(self):
+        """
+        Adding product to cart test.
+        """
+        cart_id = self.marketplace.new_cart()
+        result = self.marketplace.add_to_cart(cart_id, "product1")
+        self.assertEqual(result, False)
+        producer_id = self.marketplace.register_producer()
+        self.marketplace.publish(producer_id, "product1")
+        result = self.marketplace.add_to_cart(cart_id, "product1")
+        self.assertEqual(result, True)
+
+    def test_remove_from_cart(self):
+        """
+        Removing product from cart test.
+        """
+        cart_id = self.marketplace.new_cart()
+        producer_id = self.marketplace.register_producer()
+        self.marketplace.publish(producer_id, "product1")
+        self.marketplace.add_to_cart(cart_id, "product1")
+        result = "product1" in self.marketplace.carts[cart_id]
+        self.assertEqual(result, True)
+        self.marketplace.remove_from_cart(cart_id, "product1")
+        result = "product1" not in self.marketplace.carts[cart_id]
+        self.assertEqual(result, True)
+
+    def test_place_order(self):
+        """
+        Checking out a cart test.
+        """
+        cart_id1 = self.marketplace.new_cart()
+        producer_id1 = self.marketplace.register_producer()
+        self.marketplace.publish(producer_id1, "product1")
+        self.marketplace.add_to_cart(cart_id1, "product1")
+        cart_id2 = self.marketplace.new_cart()
+        producer_id2 = self.marketplace.register_producer()
+        self.marketplace.publish(producer_id2, "product2")
+        self.marketplace.add_to_cart(cart_id2, "product2")
+        receipt = self.marketplace.place_order(cart_id1)
+        self.assertEqual(receipt, ["product1"])
+        receipt = self.marketplace.place_order(cart_id2)
+        self.assertEqual(receipt, ["product2"])
+
+
+if __name__ == '__main__':
+    unittest.main()
