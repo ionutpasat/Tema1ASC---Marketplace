@@ -7,7 +7,7 @@ March 2021
 """
 
 from threading import Thread
-
+from time import sleep
 
 class Consumer(Thread):
     """
@@ -31,7 +31,30 @@ class Consumer(Thread):
         :type kwargs:
         :param kwargs: other arguments that are passed to the Thread's __init__()
         """
-        pass
+        Thread.__init__(self)
+        self.carts = carts
+        self.marketplace = marketplace
+        self.id_no = 0
+        self.retry_wait_time = retry_wait_time
+        self.kwargs = kwargs
 
     def run(self):
-        pass
+        for batch in self.carts:
+            self.id_no = self.marketplace.new_cart()
+            for product in batch:
+                quantity = product['quantity']
+                while quantity > 0:
+                    if product['type'] == "remove":
+                        self.marketplace.remove_from_cart(
+                            self.id_no, product['product'])
+                    elif product['type'] == "add":
+                        response = False
+                        while response is False:
+                            response = self.marketplace.add_to_cart(
+                                self.id_no, product['product'])
+                            sleep(self.retry_wait_time)
+                    quantity -= 1
+            receipt = self.marketplace.place_order(self.id_no)
+            with self.marketplace.carts_lock:
+                for product in receipt:
+                    print(f"{self.kwargs['name']} bought {product}")
