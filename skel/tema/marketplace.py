@@ -50,9 +50,9 @@ class Marketplace:
         """
         with self.producers_lock:
             producer_id = len(self.producers)
-            self.producers.append({'id': producer_id, 'queue': []})
-            logger.info("Producer with id %s started!", producer_id)
-            return producer_id
+        self.producers.append({'id': producer_id, 'queue': []})
+        logger.info("Producer with id %s started!", producer_id)
+        return producer_id
 
     def publish(self, producer_id, product):
         """
@@ -83,9 +83,9 @@ class Marketplace:
         """
         with self.carts_lock:
             cart_id = len(self.carts)
-            self.carts.append([])
-            logger.info("Cart with id %s was created!", cart_id)
-            return cart_id
+        self.carts.append([])
+        logger.info("Cart with id %s was created!", cart_id)
+        return cart_id
 
     def add_to_cart(self, cart_id, product):
         """
