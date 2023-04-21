@@ -31,7 +31,7 @@ class Producer(Thread):
         @type kwargs:
         @param kwargs: other arguments that are passed to the Thread's __init__()
         """
-        Thread.__init__(self)
+        super().__init__(**kwargs)
         self.products = products
         self.marketplace = marketplace
         self.republish_wait_time = republish_wait_time
@@ -48,13 +48,5 @@ class Producer(Thread):
                         response = self.marketplace.publish(self.id_no, product[0])
                         if response is False:
                             sleep(self.republish_wait_time)
-                        if len(self.marketplace.carts) == self.marketplace.placed_orders:
-                            break
                     sleep(product[2])
-                    if len(self.marketplace.carts) == self.marketplace.placed_orders:
-                        break
                     quantity -= 1
-                if len(self.marketplace.carts) == self.marketplace.placed_orders:
-                    break
-            if len(self.marketplace.carts) == self.marketplace.placed_orders:
-                break

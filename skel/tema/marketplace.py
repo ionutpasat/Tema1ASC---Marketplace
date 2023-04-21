@@ -40,9 +40,9 @@ class Marketplace:
         self.carts = []
         self.producers = []
         self.returned_products = []
-        self.placed_orders = 0
         self.carts_lock = Lock()
         self.producers_lock = Lock()
+        self.print_lock = Lock()
 
     def register_producer(self):
         """
@@ -135,8 +135,6 @@ class Marketplace:
         :type cart_id: Int
         :param cart_id: id cart
         """
-        with self.carts_lock:
-            self.placed_orders += 1
         return self.carts[cart_id]
 
 class TestMarketplace(unittest.TestCase):
@@ -224,7 +222,3 @@ class TestMarketplace(unittest.TestCase):
         self.assertEqual(receipt, ["product1"])
         receipt = self.marketplace.place_order(cart_id2)
         self.assertEqual(receipt, ["product2"])
-
-
-if __name__ == '__main__':
-    unittest.main()

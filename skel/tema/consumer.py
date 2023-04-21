@@ -31,13 +31,12 @@ class Consumer(Thread):
         :type kwargs:
         :param kwargs: other arguments that are passed to the Thread's __init__()
         """
-        Thread.__init__(self)
+        super().__init__(**kwargs)
         self.carts = carts
         self.marketplace = marketplace
         self.id_no = 0
         self.retry_wait_time = retry_wait_time
         self.kwargs = kwargs
-
     def run(self):
         for batch in self.carts:
             self.id_no = self.marketplace.new_cart()
@@ -55,6 +54,6 @@ class Consumer(Thread):
                             sleep(self.retry_wait_time)
                     quantity -= 1
             receipt = self.marketplace.place_order(self.id_no)
-            with self.marketplace.carts_lock:
+            with self.marketplace.print_lock:
                 for product in receipt:
                     print(f"{self.kwargs['name']} bought {product}")
