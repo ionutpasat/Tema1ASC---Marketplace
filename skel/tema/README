@@ -1,0 +1,38 @@
+Tema1 ASC Marketplace - Pasat Ionut 334CC
+
+    Soluția aleasă a fost inspirată după problema clasică de producer-consumer.
+Enunțul având totuși un twist, anume adăugarea queue_size_per_producer,
+a trebuit să adaptez soluția față de implementarea standard a problemei
+care folosește un singur buffer de produce/consume.
+
+    Aceasta a presupus schimbarea logicii de adăugare în buffer (adaugare în 
+funcție de coada producerului respectiv) și de luare din buffer de către un 
+consumer, respectiv verificarea cozii fiecărui producer. 
+În plus a mai fost și funcționalitatea de remove a unui produs deja 
+"cumpărat" de un consumer. Acest produs l-am adăugat într-o listă de produse
+returnate deoarece nu-l puteam pune înapoi în coada producer-ului de unde l-am
+luat, astfel apărând problema cozii pline a producer-ului, caz care nu a fost
+tratat în enunțul problemei așa că am ales implementarea cu o listă auxiliară.
+
+    Consider că tema a fost utilă în aprofundarea noțiunilor de threads, dar
+și a folosirii limbajului python în diferite situații.
+    Implementarea mea mi se pare una basic care nu ține cont de eficiență sau
+time/space management. Aceasta putea folosii alt tip de structuri și/sau 
+prelucrare a datelor astfel încât să sporească cele menționate mai sus.
+
+    Partea de logging a ajutat destul de mult la început, în momentele în care
+apărea un deadlock și știam în ce metode se oprește programul. O altă
+întâmplare unde log-urile mi-au fost de folos, a reprezentat-o partea de
+timestamps. Asta mi-a permis să-mi dau seama că întârzierea dată de sleep
+în modulul de producer nu funcționa, ulterior văzând că de fapt făceam cast
+la int timpului de sleep care era float, executând de fapt sleep(0), valorile
+date fiind subunitare.
+
+    Testarea funcțiilor din modulul de marketplace a fost destul de simplă,
+neavând de a face cu paralelism. Am urmat pașii din documentația oferită în
+enunț creând astfel produse mocked și testând strict funcționalitățile
+metodelor definite.
+
+Resurse utilizate:
+    Toate resursele și documentația oferită în enunț, nimic mai mult.
+
